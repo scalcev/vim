@@ -264,8 +264,6 @@ nnoremap <down> nop
 nnoremap <left> nop
 nnoremap <right> nop
 
-execute pathogen#infect()
-
 " See http://vim.wikia.com/wiki/Cscope
 if has('cscope')
     "set cscopetag cscopeverbose
@@ -371,7 +369,6 @@ au FileType qf call AdjustWindowHeight(3, 10)
 
 " See http://vim.wikia.com/wiki/Autoloading_Cscope_Database
 function! LoadCscope()
-    "let db = findfile("cscope.out", ".;")
     let db = findfile("cscope.out", ";")
     if (!empty(db))
         let path = strpart(db, 0, match(db, "/cscope.out$"))

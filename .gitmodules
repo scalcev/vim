@@ -1,0 +1,9 @@
+[submodule "pack/scalcev/start/vim-surround"]
+	path = pack/scalcev/start/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+[submodule "pack/scalcev/start/vim-repeat"]
+	path = pack/scalcev/start/vim-repeat
+	url = https://github.com/tpope/vim-repeat.git
+[submodule "pack/scalcev/start/nerdcommenter"]
+	path = pack/scalcev/start/nerdcommenter
+	url = https://github.com/scrooloose/nerdcommenter.git
