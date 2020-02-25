@@ -148,7 +148,7 @@ if !exists("autocommands_loaded")
     "autocmd FileType python set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
     autocmd FileType make set noexpandtab
 
-    autocmd FileType xml              compiler xmlwf
+    autocmd FileType xml compiler xmlwf
     autocmd BufWritePost *.xml make %
 
     autocmd BufNewFile *.py 0read ~/.vim/skeleton.py
@@ -160,6 +160,7 @@ if !exists("autocommands_loaded")
 
     autocmd BufWritePost *.sh call SetExecutableBit()
     autocmd BufWritePost *.py call SetExecutableBit()
+    "autocmd BufWritePost *.py call Flake8()
 
     autocmd BufNewFile,BufRead *.gdb set filetype=python
 
@@ -199,10 +200,10 @@ nnoremap <leader>rm :call RunResMan()<CR>
 nnoremap <SPACE> ^2xwd$xa=y<ESC>
 "nnoremap <SPACE> ^i# <ESC>wd$a is not set<ESC>
 
-" See http://www.pinkjuice.com/howto/vimxml/moretasks.xml
-nnoremap <leader>x :make %
+nnoremap <leader>x :w<CR>:cclose<CR>:make %<CR><CR>:copen<CR>
 
 nnoremap <leader>m :MRU <CR>
+nnoremap <leader>vrc :split $MYVIMRC<CR>
 nnoremap <leader>sv :source $MYVIMRC<CR>
 
 " http://vim.wikia.com/wiki/Search_and_replace_the_word_under_the_cursor
@@ -213,8 +214,21 @@ nnoremap <leader>vg :vimgrep <cword> <C-R>=expand("%:p:h") . "/*" <CR>
 " Recursively search for word under cursor
 nnoremap <leader>ag :ack <cword> <C-R>=expand("%:p:h")<CR>
 
+nnoremap <leader>s gg=G:sort<CR>
+
 " Shortcut to rapidly toggle `set list`
 nnoremap <leader>l :set list!<CR>
+
+nnoremap <leader>f :call Flake8()<CR>
+
+"nnoremap <leader>t :%s/\s\+$//e<CR>
+nnoremap <leader>t :%s/\s\+$//<CR>
+
+nnoremap <leader>cn :cn<CR>
+nnoremap <leader>cp :cp<CR>
+
+let g:pymode_python = 'python3'
+
 "Invisible character colors 
 highlight NonText guifg=#4a4a59
 highlight SpecialKey guifg=#4a4a59
@@ -235,7 +249,6 @@ nnoremap <silent> <F12> :bn<CR>
 nnoremap <silent> <S-F12> :bp<CR>
 
 set laststatus=2
-"set path+=$CDPATH
 
 set path+=steps,suites/hip,gherkin/steps,gherkin/suites/hip
 set suffixesadd=.feature
@@ -247,6 +260,8 @@ nnoremap <leader>r _cw<C-R>0<Esc>
 " Avoid need to shift
 nnoremap : <nop>
 nnoremap ; :
+vnoremap : <nop>
+vnoremap ; :
 
 if has('win32')
   nnoremap ,cs :let @*=substitute(expand("%"), "/", "\\", "g")<CR>
@@ -259,10 +274,15 @@ else
   nnoremap ,cl :let @*=expand("%:p")<CR>
 endif
 
+set makeprg=pycodestyle\ \%
+
 nnoremap <up> nop
 nnoremap <down> nop
 nnoremap <left> nop
 nnoremap <right> nop
+
+let g:ycm_server_keep_logfiles = 1
+let g:ycm_server_log_level = 'debug'
 
 " See http://vim.wikia.com/wiki/Cscope
 if has('cscope')
@@ -281,6 +301,14 @@ if has('cscope')
 
     "command -nargs=0 Cscope cs add $VIMSRC/src/cscope.out $VIMSRC/src
 endif
+
+function! CreateHeaderFile()
+    let current=expand('%:r')
+    "echom current
+    echom expand('%:r') . '.h'
+    split expand('%:r') . '.h'
+endfunction
+nnoremap <leader>ch :call CreateHeaderFile<CR>
 
 function! ToggleLinesNos()
     let &number = !&number
@@ -345,22 +373,6 @@ function! AppendToFile(file, lines)
     call writefile(fcontents+a:lines, a:file)
 endfunction
 
-function! Hijack(...)
-    let hijacked=$HOME . "/.hijacked"
-    if a:0 == 0
-        let expr="%:p"
-    else
-        let expr=a:1
-    endif
-    let name=expand(expr)
-    let list=split(name)
-    if filereadable(hijacked)
-        call AppendToFile(hijacked, list)
-    else
-        call writefile(list, hijacked)
-    endif
-endfunction
-
 function! AdjustWindowHeight(minheight, maxheight)
   exe max([min([line("$"), a:maxheight]), a:minheight]) . "wincmd _"
 endfunction
@@ -389,3 +401,18 @@ function! SetExecutableBit()
   execute "au! FileChangedShell " . fname
 endfunction
 command! Xbit call SetExecutableBit()
+
+if &term =~ "xterm.*"
+    let &t_ti = &t_ti . "\e[?2004h"
+    let &t_te = "\e[?2004l" . &t_te
+    function! XTermPasteBegin(ret)
+        set pastetoggle=<Esc>[201~
+        set paste
+        return a:ret
+    endfunction
+    map <expr> <Esc>[200~ XTermPasteBegin("i")
+    imap <expr> <Esc>[200~ XTermPasteBegin("")
+    vmap <expr> <Esc>[200~ XTermPasteBegin("c")
+    cmap <Esc>[200~ <nop>
+    cmap <Esc>[201~ <nop>
+endif
