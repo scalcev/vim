@@ -7,3 +7,6 @@
 [submodule "pack/scalcev/start/nerdcommenter"]
 	path = pack/scalcev/start/nerdcommenter
 	url = https://github.com/scrooloose/nerdcommenter.git
+[submodule "pack/scalcev/start/YouCompleteMe"]
+	path = pack/scalcev/start/YouCompleteMe
+	url = https://github.com/ycm-core/YouCompleteMe.git
