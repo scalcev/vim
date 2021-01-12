@@ -250,7 +250,9 @@ nnoremap <silent> <S-F12> :bp<CR>
 
 set laststatus=2
 
-set path+=steps,suites/hip,gherkin/steps,gherkin/suites/hip
+"set path+=steps,suites/hip,gherkin/steps,gherkin/suites/hip
+set path+=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
+set path+=/Users/sca29/Work/devops-sky-q-yard
 set suffixesadd=.feature
 
 " Replace word with contents of yank register without changing the contents of
@@ -273,8 +275,6 @@ else
   nnoremap ,cs :let @*=expand("%")<CR>
   nnoremap ,cl :let @*=expand("%:p")<CR>
 endif
-
-set makeprg=pycodestyle\ \%
 
 nnoremap <up> nop
 nnoremap <down> nop
