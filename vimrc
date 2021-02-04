@@ -5,6 +5,9 @@ filetype indent on
 syntax on
 
 " Set line numbering options
+" Since Vim 7.4, enabling number and relativenumber at the same time produces hybrid line number mode. All lines will show their relative number, except for current line, which will show its absolute line number.
+" Show the line number
+set number 
 " Show the line number relative to the line
 set relativenumber 
 " Set code folding options
